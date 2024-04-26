@@ -12,14 +12,16 @@ const io = socketio(server);
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Multer configuration for file upload
 const storage = multer.diskStorage({
-    destination: path.join(__dirname, 'uploads'),
-    filename: (req, file, cb) => {
-        cb(null, file.originalname);
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
     }
 });
-const upload = multer({ storage });
+
+const upload = multer({ storage: storage });
 
 // File upload endpoint
 app.post('/upload', upload.single('file'), (req, res) => {
